@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+</head>
+<body>
+<title>Модель пилота амбассадора</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geologica:wght,SHRP@300..800,0..100&display=swap">
+<style>
+/* Layout: рабочий лист — одна колонка текста, калькулятор как табло результата */
+:root {
+  --bg: #eef2f5;
+  --surface: #ffffff;
+  --ink: #13233d;
+  --muted: #56657c;
+  --rule: #d3d9e2;
+  --court: #2059c7;
+  --court-ink: #f4f7fc;
+  --ball: #2059c7;
+  --ball-ink: #ffffff;
+  --neg: #b4362a;
+  --pos: #1f7a4a;
+
+  --f-display: "Geologica", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Geologica", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --f-mono: "Geologica", "Segoe UI", system-ui, sans-serif;
+
+  --s-xs: .8125rem; --s-sm: .9375rem; --s-md: 1.0625rem;
+  --s-lg: clamp(1.2rem, 1.05rem + .7vw, 1.5rem);
+  --s-xl: clamp(1.5rem, 1.15rem + 1.8vw, 2.3rem);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #08121f; --surface: #0e1b2e; --ink: #e9eef6; --muted: #8e9db3; --rule: #1f2e44;
+    --court: #123f8f; --court-ink: #f4f7fc; --ball: #1b4fb3; --ball-ink: #ffffff;
+    --neg: #ff8f80; --pos: #6fd49b;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #08121f; --surface: #0e1b2e; --ink: #e9eef6; --muted: #8e9db3; --rule: #1f2e44;
+  --court: #123f8f; --court-ink: #f4f7fc; --ball: #1b4fb3; --ball-ink: #ffffff;
+  --neg: #ff8f80; --pos: #6fd49b;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 400 var(--s-md)/1.6 var(--f-body);
+  padding-inline: clamp(16px, 4vw, 40px); padding-block: clamp(16px, 3vw, 32px) 48px;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 860px; margin-inline: auto; display: grid; gap: clamp(44px, 6vw, 72px); }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 800; font-variation-settings: "SHRP" 100; letter-spacing: -.02em; line-height: 1.05; margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(2.2rem, 1.5rem + 3vw, 3.6rem); }
+h2 { font-size: clamp(1.6rem, 1.25rem + 1.6vw, 2.4rem); }
+h3 { font-family: var(--f-body); font-variation-settings: "SHRP" 0; letter-spacing: 0; line-height: 1.3; font-size: var(--s-md); font-weight: 600; }
+p { margin: 0; max-width: 66ch; text-wrap: pretty; }
+:focus-visible { outline: 3px solid var(--ball); outline-offset: 2px; }
+.eyebrow { font: 400 var(--s-sm)/1.4 var(--f-body); color: var(--muted); }
+section, header { display: grid; gap: 18px; }
+.head { display: grid; gap: 8px; padding-top: 16px; border-top: 2px solid var(--ink); }
+.muted { color: var(--muted); }
+
+.warn {
+  background: var(--ball); color: var(--ball-ink); border-radius: 6px;
+  padding: 16px 18px; display: grid; gap: 6px; font-size: var(--s-sm); line-height: 1.5;
+}
+.warn b { font-family: var(--f-display); font-size: 1.3rem; line-height: 1.2; font-weight: 700; }
+
+.parts { margin: 0; padding: 0; list-style: none; display: grid; }
+.parts li { display: grid; grid-template-columns: 11rem minmax(0, 1fr); gap: 4px 20px; padding: 14px 0; border-bottom: 1px solid var(--rule); }
+.parts li:first-child { border-top: 1px solid var(--rule); }
+.parts .how { font-size: var(--s-sm); color: var(--muted); display: block; margin-top: 6px; }
+@media (max-width: 560px) { .parts li { grid-template-columns: 1fr; } }
+
+.formulas { display: grid; gap: 10px; background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 16px 18px; }
+.formulas code { font: 500 var(--s-sm)/1.5 var(--f-mono); display: block; overflow-x: auto; white-space: nowrap; }
+.formulas code b { color: var(--court); font-weight: 600; }
+
+/* ---------- Калькулятор ---------- */
+.calc { display: grid; gap: 24px; background: var(--surface); border: 2px solid var(--ink); border-radius: 6px; padding: clamp(16px, 3vw, 28px); }
+.inputs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 640px) { .inputs { grid-template-columns: 1fr; } }
+label { display: grid; gap: 6px; font-size: var(--s-sm); line-height: 1.35; align-content: start; }
+label small { color: var(--muted); font-size: var(--s-xs); }
+input[type="number"] {
+  font: 500 var(--s-md)/1 var(--f-mono); font-variant-numeric: tabular-nums;
+  width: 100%; padding: 10px 12px; border: 1px solid var(--rule); border-radius: 4px;
+  background: var(--bg); color: var(--ink);
+}
+input[type="number"]:read-only { background: transparent; border-style: dashed; }
+details { border-top: 1px solid var(--rule); padding-top: 12px; }
+summary { cursor: pointer; font-weight: 500; font-size: var(--s-sm); }
+details .inputs { margin-top: 14px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 640px) { details .inputs { grid-template-columns: 1fr; } }
+
+.be { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; padding: 16px 18px; background: var(--court); color: var(--court-ink); border-radius: 4px; }
+.be span { font-size: var(--s-sm); opacity: .85; }
+.be b { font: 800 clamp(2.4rem, 1.6rem + 3vw, 3.6rem)/1 var(--f-display); font-variation-settings: "SHRP" 100; color: var(--court-ink); font-variant-numeric: tabular-nums; }
+.be em { font-style: normal; font-size: var(--s-sm); opacity: .9; }
+
+.table-box { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; min-width: 520px; }
+th, td { text-align: right; padding: 10px 8px; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; }
+th { font: 500 var(--s-xs)/1.3 var(--f-body); color: var(--muted); white-space: normal; vertical-align: bottom; }
+td { font-family: var(--f-mono); font-size: var(--s-sm); }
+td.neg { color: var(--neg); }
+td.pos { color: var(--pos); }
+td.zero { color: var(--muted); }
+tr.custom td { background: var(--bg); }
+tr.custom input { width: 5.5rem; padding: 6px 8px; font-size: var(--s-sm); }
+.calc .muted { font-size: var(--s-sm); }
+
+ul.plain { margin: 0; padding-left: 1.1em; display: grid; gap: 8px; }
+ul.plain li { max-width: 66ch; }
+footer { font-size: var(--s-xs); color: var(--muted); padding-top: 16px; border-top: 1px solid var(--rule); }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">Ян Николаев, предложение для NOX Russia</p>
+    <h1>Как можно посчитать пилот</h1>
+    <p>Эта страница дополняет основное предложение. Здесь механика расчёта, по которой можно оценить небольшой пилот на согласованный срок. Сам пилот пока только предложение, а не принятое решение.</p>
+    <div class="warn" role="note">
+      <b>Все цифры ниже условные</b>
+      Это не цены, не себестоимость и не маржа NOX. Это не прогноз моих продаж и не запрос поддержки на 18&nbsp;000&nbsp;₽. Это пример модели: подставьте в поля свои данные, и расчёт пересчитается.
+    </div>
+  </header>
+
+  <section aria-labelledby="parts">
+    <div class="head">
+      <h2 id="parts">Из чего может складываться польза</h2>
+    </div>
+    <ul class="parts">
+      <li><h3>Дополнительные продажи</h3><div><p>Покупки после личной рекомендации, знакомства с ракеткой на корте, тестирования или контента.</p><span class="how">Считаем в деньгах</span></div></li>
+      <li><h3>Контент</h3><div><p>Только конкретные материалы, которые заранее согласованы и которые бренд действительно сможет использовать.</p><span class="how">Считаем списком материалов</span></div></li>
+      <li><h3>Обратная связь</h3><div><p>Какие модели интересуют игроков, что спрашивают, что мешает выбрать ракетку. Сначала стоит понять, что из этого полезно представительству.</p><span class="how">Деньгами не оцениваем</span></div></li>
+    </ul>
+    <p class="muted">Эти три части не складываются в одну сумму. Если контент помог продать ракетку, эта польза уже есть в продажах. Если добавить сверху ещё «стоимость контента» и «медийную ценность», одна и та же польза будет посчитана несколько раз.</p>
+  </section>
+
+  <section aria-labelledby="model">
+    <div class="head">
+      <h2 id="model">Формулы</h2>
+    </div>
+    <div class="formulas">
+      <code>дополнительная выручка <b>=</b> дополнительные покупки <b>×</b> средний оплаченный чек</code>
+      <code>эффект после расходов <b>=</b> дополнительные покупки <b>×</b> маржинальный доход с покупки <b>−</b> расходы на пилот</code>
+      <code>точка окупаемости <b>=</b> ⌈ расходы на пилот <b>÷</b> маржинальный доход с покупки ⌉</code>
+    </div>
+    <ul class="plain">
+      <li><b>Дополнительные покупки</b> — только те, которых без пилота, скорее всего, не было бы.</li>
+      <li><b>Маржинальный доход</b> — сумма, которая остаётся с продажи после переменных расходов и скидок. Это не весь чек и не обязательно бухгалтерская чистая прибыль.</li>
+      <li><b>Расходы на пилот</b> — фактическая стоимость инвентаря для бренда (а не розничная цена), доставка, вознаграждение и другие согласованные расходы.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="calc">
+    <div class="head">
+      <h2 id="calc">Подставьте свои цифры</h2>
+    </div>
+
+    <form class="calc" id="calc-form" novalidate>
+      <div class="inputs">
+        <label for="check">Средний оплаченный чек, ₽<small>условно</small>
+          <input type="number" id="check" min="0" step="500" value="30000" inputmode="numeric">
+        </label>
+        <label for="margin">Маржинальный доход с покупки, ₽<small>условно</small>
+          <input type="number" id="margin" min="0" step="500" value="6000" inputmode="numeric">
+        </label>
+        <label for="cost">Расходы бренда на пилот, всего, ₽<small id="cost-hint">условно</small>
+          <input type="number" id="cost" min="0" step="500" value="18000" inputmode="numeric">
+        </label>
+      </div>
+
+      <details id="breakdown">
+        <summary>Разложить расходы по статьям</summary>
+        <div class="inputs">
+          <label for="c-gear">Инвентарь, фактическая стоимость для бренда<input type="number" id="c-gear" min="0" step="500" placeholder="0" inputmode="numeric"></label>
+          <label for="c-ship">Доставка<input type="number" id="c-ship" min="0" step="100" placeholder="0" inputmode="numeric"></label>
+          <label for="c-fee">Вознаграждение, если договоримся<input type="number" id="c-fee" min="0" step="500" placeholder="0" inputmode="numeric"></label>
+          <label for="c-other">Другие согласованные расходы<input type="number" id="c-other" min="0" step="500" placeholder="0" inputmode="numeric"></label>
+        </div>
+      </details>
+
+      <div class="be" aria-live="polite">
+        <span>Точка окупаемости</span>
+        <b id="be-n">3</b>
+        <em id="be-text">дополнительные покупки за весь срок пилота</em>
+      </div>
+
+      <div class="table-box">
+        <table>
+          <thead>
+            <tr><th>Сценарий: дополнительных покупок за пилот</th><th>Выручка</th><th>Маржинальный доход</th><th>Эффект после расходов</th></tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+      <p class="muted">Сценарии показывают механику и не говорят, какой исход вероятнее. Данных для такой оценки пока нет.</p>
+    </form>
+  </section>
+
+  <section aria-labelledby="measure">
+    <div class="head">
+      <h2 id="measure">Как отличить дополнительные покупки</h2>
+    </div>
+    <ul class="plain">
+      <li><b>Личная ссылка или промокод.</b> Показывает, через кого пришёл покупатель.</li>
+      <li><b>Журнал обращений и тестов.</b> Кто пробовал ракетку, кто спрашивал о модели, что ответили.</li>
+      <li><b>Вопрос покупателю.</b> Что повлияло на выбор и рассматривал ли он другие ракетки.</li>
+      <li><b>Ограничение.</b> Код сам по себе не доказывает, что без пилота покупки не было бы. Человек мог и так собираться купить NOX, а код просто дал скидку. Поэтому выводы делаем по всем трём источникам вместе и заранее договариваемся, какую покупку считать дополнительной.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="need">
+    <div class="head">
+      <h2 id="need">Что нужно уточнить вместе</h2>
+    </div>
+    <ul class="plain">
+      <li>Средний оплаченный чек и маржинальный доход с продажи по нужным моделям, хотя бы в виде диапазона.</li>
+      <li>Фактическая стоимость инвентаря для представительства и доставка.</li>
+      <li>Формат поддержки и срок пилота, который вам удобен.</li>
+      <li>Как вы сейчас учитываете продажи: промокоды, ссылки, магазины-партнёры.</li>
+      <li>Что для вас важнее: продажи, контент или обратная связь от игроков.</li>
+    </ul>
+  </section>
+
+  <footer>Личная страница Яна Николаева. Не официальный ресурс NOX. Все расчёты условные и приведены для обсуждения.</footer>
+</div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var fmt = new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 0 });
+  var MINUS = '−';
+  var SCENARIOS = [0, 3, 5, 10];
+  var parts = ['c-gear', 'c-ship', 'c-fee', 'c-other'];
+
+  function num(id) { var v = parseFloat($(id).value); return isFinite(v) && v > 0 ? v : 0; }
+  function rub(v) { return (v < 0 ? MINUS : '') + fmt.format(Math.abs(v)) + ' ₽'; }
+  function signed(v) { return v > 0 ? '+' + rub(v) : rub(v); }
+  function plural(n, one, few, many) {
+    var m10 = n % 10, m100 = n % 100;
+    if (m10 === 1 && m100 !== 11) return one;
+    if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return few;
+    return many;
+  }
+
+  var customN = 4;
+
+  function row(n, isCustom, check, margin, cost) {
+    var effect = n * margin - cost;
+    var cls = effect < 0 ? 'neg' : effect > 0 ? 'pos' : 'zero';
+    var first = isCustom
+      ? '<label for="custom-n" style="display:flex;gap:8px;align-items:center;font-size:inherit">Своё число <input type="number" id="custom-n" min="0" step="1" value="' + n + '" inputmode="numeric"></label>'
+      : String(n);
+    return '<tr' + (isCustom ? ' class="custom"' : '') + '><td>' + first + '</td><td>' + rub(n * check) + '</td><td>' + rub(n * margin) +
+      '</td><td class="' + cls + '">' + (effect === 0 ? '0 ₽' : signed(effect)) + '</td></tr>';
+  }
+
+  function sumParts() { return parts.reduce(function (s, id) { return s + num(id); }, 0); }
+
+  function render() {
+    var partsTotal = sumParts();
+    var costEl = $('cost');
+    if (partsTotal > 0) {
+      costEl.value = partsTotal;
+      costEl.readOnly = true;
+      $('cost-hint').textContent = 'считается из статей ниже';
+    } else {
+      costEl.readOnly = false;
+      $('cost-hint').textContent = 'условно';
+    }
+
+    var check = num('check'), margin = num('margin'), cost = num('cost');
+
+    if (margin > 0) {
+      var be = Math.ceil(cost / margin);
+      $('be-n').textContent = fmt.format(be);
+      $('be-text').textContent = (be === 0
+        ? 'покупок: расходов нет, пилот в плюсе с первой продажи'
+        : plural(be, 'дополнительная покупка', 'дополнительные покупки', 'дополнительных покупок') + ' за весь срок пилота') +
+        (be > 0 ? ', выручка ' + rub(be * check) : '');
+    } else {
+      $('be-n').textContent = '—';
+      $('be-text').textContent = 'укажите маржинальный доход с покупки больше нуля';
+    }
+
+    var html = SCENARIOS.map(function (n) { return row(n, false, check, margin, cost); }).join('');
+    html += row(customN, true, check, margin, cost);
+    var tbody = $('rows');
+    var focused = document.activeElement && document.activeElement.id === 'custom-n';
+    tbody.innerHTML = html;
+    if (focused) { var el = $('custom-n'); el.focus(); try { el.setSelectionRange(el.value.length, el.value.length); } catch (e) {} }
+  }
+
+  $('calc-form').addEventListener('submit', function (e) { e.preventDefault(); });
+  $('calc-form').addEventListener('input', function (e) {
+    if (e.target.id === 'custom-n') {
+      var v = parseInt(e.target.value, 10);
+      customN = isFinite(v) && v >= 0 ? v : 0;
+    }
+    render();
+  });
+  render();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+</head>
+<body>
+<title>Ян Николаев, падел</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geologica:wght,SHRP@300..800,0..100&display=swap">
+<style>
+/* Layout: страница собрана из полос разного цвета, как стенки корта: светлое стекло, синий корт, глубокий синий, белые панели. Каждый раздел — своя полоса, всё выровнено по левому краю. */
+:root {
+  --glass: #eef2f5;
+  --panel: #ffffff;
+  --ink: #13233d;
+  --mist: #5f6e84;
+  --line: #d3dbe4;
+  --court: #2059c7;
+  --court-shade: #16418f;
+  --on-court: #ffffff;
+  --on-court-soft: rgba(255, 255, 255, .7);
+  --on-court-faint: rgba(255, 255, 255, .38);
+  --on-court-line: rgba(255, 255, 255, .22);
+  --tint: #e3ebf8;
+
+  --font: "Geologica", "Segoe UI", system-ui, -apple-system, sans-serif;
+
+  /* шкала: 13 · 17 · 21 · 28 · 36 · 48 · 64 */
+  --t-small: .8125rem;
+  --t-body: 1.0625rem;
+  --t-lead: clamp(1.1875rem, 1.05rem + .6vw, 1.3125rem);
+  --t-h3: clamp(1.25rem, 1.12rem + .6vw, 1.5rem);
+  --t-h2: clamp(1.75rem, 1.3rem + 2vw, 3rem);
+  --t-place: clamp(1.75rem, 1.3rem + 1.9vw, 3rem);
+  --t-name: clamp(3.2rem, 1.4rem + 6.6vw, 6rem);
+  --t-goal: clamp(4rem, 2rem + 9vw, 9.5rem);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --glass: #0d1829; --panel: #122036; --ink: #e8eef6; --mist: #97a6bb; --line: #24344d;
+    --court: #1b4fb3; --court-shade: #0f2f6c;
+    --on-court: #ffffff; --on-court-soft: rgba(255, 255, 255, .72); --on-court-faint: rgba(255, 255, 255, .4); --on-court-line: rgba(255, 255, 255, .2);
+    --tint: #1a2d4d;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --glass: #0d1829; --panel: #122036; --ink: #e8eef6; --mist: #97a6bb; --line: #24344d;
+  --court: #1b4fb3; --court-shade: #0f2f6c;
+  --on-court: #ffffff; --on-court-soft: rgba(255, 255, 255, .72); --on-court-faint: rgba(255, 255, 255, .4); --on-court-line: rgba(255, 255, 255, .2);
+  --tint: #1a2d4d;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--glass); color: var(--ink);
+  font-family: var(--font); font-size: var(--t-body); line-height: 1.6; font-weight: 350;
+  font-variation-settings: "SHRP" 0;
+  -webkit-font-smoothing: antialiased;
+}
+.in { max-width: 1120px; margin-inline: auto; padding-inline: clamp(16px, 4vw, 48px); }
+.in > * { min-width: 0; }
+section { padding-block: clamp(64px, 9vw, 112px); }
+h1, h2, h3 { margin: 0; text-wrap: balance; font-weight: 800; font-variation-settings: "SHRP" 100; letter-spacing: -.02em; line-height: 1.05; }
+h2 { font-size: var(--t-h2); }
+h3 { font-size: var(--t-h3); font-weight: 650; letter-spacing: -.01em; line-height: 1.2; }
+p { margin: 0; max-width: 62ch; text-wrap: pretty; }
+b, strong { font-weight: 600; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--court); outline-offset: 3px; }
+.court :focus-visible, .deep :focus-visible { outline-color: var(--on-court); }
+.lead { font-size: var(--t-lead); line-height: 1.5; }
+.soft { color: var(--mist); }
+.photo { margin: 0; overflow: hidden; border-radius: 6px; background: var(--court-shade); max-width: 100%; }
+.photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.block { display: grid; gap: clamp(28px, 4vw, 48px); }
+.block > header { display: grid; gap: 14px; }
+.block > header p { color: var(--mist); }
+.court { background: var(--court); color: var(--on-court); }
+.deep { background: var(--court-shade); color: var(--on-court); }
+.panel-band { background: var(--panel); }
+.ico { width: 28px; height: 28px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- Первый экран ---------- */
+.hero { padding-block: clamp(20px, 3vw, 36px) clamp(40px, 6vw, 80px); }
+.hero .in { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: clamp(24px, 4vw, 64px); }
+.hero .text { display: grid; align-content: space-between; gap: 40px; }
+.hero .to { font-size: var(--t-small); color: var(--mist); }
+.hero h1 { font-size: var(--t-name); line-height: .92; letter-spacing: -.035em; margin-top: clamp(16px, 4vw, 56px); }
+.hero h1 span { display: block; }
+.hero .summary { display: grid; gap: 14px; max-width: 34ch; }
+.hero .summary p:first-child { font-size: var(--t-h3); font-weight: 600; line-height: 1.3; letter-spacing: -.01em; }
+.hero .photo { aspect-ratio: 4 / 5; }
+.hero .photo img { object-position: 52% 30%; }
+@media (max-width: 760px) {
+  .hero .in { grid-template-columns: minmax(0, 1fr); }
+  .hero .photo { aspect-ratio: 1 / 1.1; }
+}
+.opener { padding-block: 0 clamp(56px, 8vw, 96px); }
+.opener p { max-width: 44ch; }
+.opener q { quotes: "«" "»"; }
+
+/* ---------- Результаты ---------- */
+.results .in { display: grid; grid-template-columns: minmax(0, .75fr) minmax(0, 1.25fr); gap: clamp(32px, 5vw, 80px); align-items: start; }
+.results .head { display: grid; gap: 16px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 32px); }
+.results .head p { color: var(--on-court-soft); }
+.results .head p strong { color: var(--on-court); }
+.board { list-style: none; margin: 0; padding: 0; }
+.board li {
+  display: grid; grid-template-columns: calc(var(--t-place) * 3.1) minmax(0, 1fr);
+  gap: 12px 16px; align-items: center; padding-block: 14px;
+  border-top: 1px solid var(--on-court-line);
+}
+.board li:last-child { border-bottom: 1px solid var(--on-court-line); }
+.board .place {
+  font-size: var(--t-place); font-weight: 800; font-variation-settings: "SHRP" 100;
+  line-height: 1; letter-spacing: -.03em; font-variant-numeric: tabular-nums; white-space: nowrap;
+  color: var(--on-court-faint);
+}
+.board .podium .place { color: var(--on-court); }
+.board .name { font-weight: 500; line-height: 1.35; overflow-wrap: anywhere; }
+.board .podium .name { font-weight: 600; }
+.board .when { display: block; color: var(--on-court-soft); font-size: var(--t-small); font-weight: 350; margin-top: 2px; }
+.source { margin-top: 16px; font-size: var(--t-small); color: var(--on-court-soft); }
+@media (max-width: 760px) {
+  .results .in { grid-template-columns: minmax(0, 1fr); }
+  .results .head { position: static; }
+}
+
+/* ---------- Цель: глубокая синяя полоса ---------- */
+.goal .in { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(28px, 5vw, 72px); align-items: center; }
+.goal .photo { aspect-ratio: 4 / 5; background: var(--court); }
+.goal .photo img { object-position: 50% 30%; }
+.goal .text { display: grid; gap: 20px; }
+.goal h2 { font-size: var(--t-goal); line-height: .9; letter-spacing: -.04em; }
+.goal h2 small { display: block; font-size: var(--t-h3); font-weight: 600; letter-spacing: -.01em; line-height: 1.3; margin-top: 14px; color: var(--on-court-soft); }
+.goal p { color: var(--on-court-soft); max-width: 44ch; }
+.goal p.lead { color: var(--on-court); }
+@media (max-width: 760px) {
+  .goal .in { grid-template-columns: minmax(0, 1fr); }
+  .goal .photo { aspect-ratio: 1 / 1.05; order: 2; }
+}
+
+/* ---------- Теннис и факты ---------- */
+.past .in { display: grid; grid-template-columns: minmax(0, .7fr) minmax(0, 1.3fr); gap: clamp(28px, 5vw, 72px); align-items: start; }
+.past .photo { aspect-ratio: 2 / 3; background: var(--tint); }
+.past .photo img { object-position: 50% 20%; }
+.past figcaption { font-size: var(--t-small); color: var(--mist); padding-top: 10px; }
+.past .col { display: grid; gap: clamp(32px, 4vw, 48px); }
+.past .story { display: grid; gap: 16px; }
+dl.facts { margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+dl.facts > div { background: var(--panel); border-radius: 6px; padding: 16px 18px; display: grid; gap: 4px; align-content: start; }
+dl.facts dt { color: var(--mist); font-size: var(--t-small); }
+dl.facts dd { margin: 0; font-weight: 500; line-height: 1.45; }
+dl.facts dd small { display: block; color: var(--mist); font-size: var(--t-small); font-weight: 350; line-height: 1.5; margin-top: 6px; }
+dl.facts .wide { grid-column: 1 / -1; }
+@media (max-width: 760px) {
+  .past .in { grid-template-columns: minmax(0, 1fr); }
+  .past figure { max-width: 300px; }
+}
+@media (max-width: 480px) { dl.facts { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- Форматы: плитки на белой полосе ---------- */
+.tiles { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; }
+.tiles li { grid-column: span 2; background: var(--glass); border-radius: 6px; padding: clamp(20px, 2.5vw, 28px); display: grid; gap: 10px; align-content: start; }
+.tiles .ico { color: var(--court); margin-bottom: 6px; }
+.tiles p { color: var(--mist); }
+@media (max-width: 860px) {
+  .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tiles li { grid-column: span 1; }
+}
+@media (max-width: 560px) { .tiles { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- Границы ---------- */
+.limits { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); gap: clamp(24px, 4vw, 56px); align-items: center; }
+.limits ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+.limits li { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 14px; align-items: start; }
+.limits .ico { color: var(--mist); width: 24px; height: 24px; margin-top: 2px; }
+.limits blockquote {
+  margin: 0; padding: clamp(22px, 3vw, 32px); border-radius: 6px; background: var(--court); color: var(--on-court);
+  font-size: var(--t-h3); font-weight: 650; line-height: 1.3; letter-spacing: -.01em;
+}
+.limits blockquote span { display: block; margin-top: 12px; font-size: var(--t-body); font-weight: 350; letter-spacing: 0; color: var(--on-court-soft); }
+@media (max-width: 760px) { .limits { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- Пилот ---------- */
+.steps { list-style: none; margin: 0; padding: 0; counter-reset: s; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; position: relative; }
+.steps::before { content: ""; position: absolute; left: 22px; right: calc((100% - 72px) / 4 - 22px); top: 21px; height: 2px; background: var(--line); }
+.steps li { counter-increment: s; display: grid; gap: 6px; align-content: start; position: relative; }
+.steps li::before {
+  content: counter(s); width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--court); color: var(--on-court); font-weight: 800; font-variation-settings: "SHRP" 100; font-size: 1.125rem;
+  margin-bottom: 10px; box-shadow: 0 0 0 6px var(--panel);
+}
+.steps b { font-size: var(--t-body); }
+.steps span { color: var(--mist); font-size: .9375rem; line-height: 1.5; }
+@media (max-width: 860px) {
+  .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .steps::before { display: none; }
+}
+@media (max-width: 460px) { .steps { grid-template-columns: minmax(0, 1fr); } }
+.pilot-foot { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); align-items: start; }
+.pilot-foot > p { color: var(--mist); }
+.formula { background: var(--tint); border-radius: 6px; padding: clamp(20px, 3vw, 28px); display: grid; gap: 12px; }
+.formula .eq { font-size: var(--t-h3); font-weight: 650; line-height: 1.3; letter-spacing: -.01em; }
+.formula p:not(.eq) { color: var(--mist); font-size: .9375rem; }
+@media (max-width: 760px) { .pilot-foot { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- Контакты ---------- */
+.contact .in { display: grid; gap: clamp(32px, 5vw, 56px); }
+.links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px clamp(24px, 5vw, 72px); }
+.links a { display: grid; gap: 4px; text-decoration: none; padding-top: 16px; border-top: 2px solid var(--on-court); }
+.links a span { color: var(--on-court-soft); }
+.links a b { font-size: clamp(2rem, 1.3rem + 3vw, 3.75rem); font-weight: 800; font-variation-settings: "SHRP" 100; letter-spacing: -.03em; line-height: 1.05; overflow-wrap: anywhere; }
+.links a:hover b { text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 6px; }
+@media (max-width: 640px) { .links { grid-template-columns: minmax(0, 1fr); } }
+footer { font-size: var(--t-small); color: var(--on-court-soft); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-racket" viewBox="0 0 24 24"><ellipse cx="13.5" cy="9" rx="6.5" ry="7"/><path d="M9.2 14.3 4 21"/><circle cx="12" cy="7" r=".6"/><circle cx="15" cy="7" r=".6"/><circle cx="12" cy="10.5" r=".6"/><circle cx="15" cy="10.5" r=".6"/></symbol>
+  <symbol id="i-swap" viewBox="0 0 24 24"><path d="M4 8h14l-4-4M20 16H6l4 4"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9.5h8M8 12.5h5"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20h16M7 16v-4M12 16V7M17 16v-7"/></symbol>
+  <symbol id="i-code" viewBox="0 0 24 24"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M13.5 5l-3 14"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></symbol>
+</svg>
+
+<!-- ===== Первый экран ===== -->
+<header class="hero">
+  <div class="in">
+    <div class="text">
+      <div>
+        <p class="to">Для NOX Russia, октябрь 2026</p>
+        <h1><span>Ян</span><span>Николаев</span></h1>
+      </div>
+      <div class="summary">
+        <p>Играю в падел. До конца 2026 года планирую войти в топ-100 рейтинга Федерации падела России.</p>
+        <p class="soft">С мая сыграл 14 официальных турниров, шесть раз был в тройке призёров.</p>
+      </div>
+    </div>
+    <figure class="photo">
+      <img src="img/portrait.jpg" alt="Ян Николаев на корте между розыгрышами" width="1296" height="1600">
+    </figure>
+  </div>
+</header>
+
+<div class="opener">
+  <div class="in">
+    <p class="lead">Я начал с <q>Дадите ракеточку?</q>, вы попросили рассказать о себе подробнее. Ракетка подождёт, сначала результаты.</p>
+  </div>
+</div>
+
+<!-- ===== Результаты ===== -->
+<section class="court results" aria-labelledby="season">
+  <div class="in">
+    <div class="head">
+      <h2 id="season">Сезон 2026</h2>
+      <p>Последние одиннадцать турниров из четырнадцати, сверху самые свежие.</p>
+      <p><strong>Три вторых места и три третьих.</strong> Август не удался: 9–13 и 11–12. В сентябре и начале октября из пяти турниров три закончил в тройке.</p>
+    </div>
+    <div>
+      <ol class="board">
+        <li class="podium"><span class="place">3</span><span class="name">CHAMPION OPEN<span class="when">4 октября, Москва</span></span></li>
+        <li><span class="place">5–8</span><span class="name">X4 Padel Tour, 3 АртРублёвка<span class="when">27 сентября, Одинцово</span></span></li>
+        <li class="podium"><span class="place">2</span><span class="name">Открытый турнир Vamos Padel Club<span class="when">20 сентября, Москва</span></span></li>
+        <li><span class="place">4</span><span class="name">NIGHT PADEL LEAGUE<span class="when">19 сентября, Москва</span></span></li>
+        <li class="podium"><span class="place">3</span><span class="name">Moscow Padel Weekend II<span class="when">6 сентября, Москва</span></span></li>
+        <li><span class="place">11–12</span><span class="name">Открытый турнир Vamos Padel Club<span class="when">16 августа, Москва</span></span></li>
+        <li><span class="place">9–13</span><span class="name">Repino Cup<span class="when">9 августа, Санкт-Петербург</span></span></li>
+        <li class="podium"><span class="place">2</span><span class="name">Летний студенческий кубок<span class="when">26 июля, Москва</span></span></li>
+        <li class="podium"><span class="place">3</span><span class="name">Падел Лига Ракетлон, этап №4<span class="when">5 июля, Москва</span></span></li>
+        <li><span class="place">7</span><span class="name">PadelGoLiga<span class="when">20 июня, Москва</span></span></li>
+        <li class="podium"><span class="place">2</span><span class="name">Moscow Padel Day II<span class="when">7 июня, Москва</span></span></li>
+      </ol>
+      <p class="source">Места взяты из истории турниров Федерации падела России.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Цель ===== -->
+<section class="deep goal" aria-labelledby="goal">
+  <div class="in">
+    <figure class="photo">
+      <img src="img/action.jpg" alt="Ян Николаев во время матча" width="872" height="1515" loading="lazy">
+    </figure>
+    <div class="text">
+      <h2 id="goal">Топ-100<small>к концу 2026 года</small></h2>
+      <p class="lead">Хочу войти в первую сотню рейтинга Федерации падела России до конца сезона.</p>
+      <p>Обещать не буду. Если будем работать вместе, вы увидите весь путь, неудачные турниры тоже.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== До падела ===== -->
+<section class="past" aria-labelledby="past">
+  <div class="in">
+    <figure>
+      <div class="photo"><img src="img/tennis.jpg" alt="Ян Николаев в детстве на теннисном корте" width="639" height="960" loading="lazy"></div>
+      <figcaption>Теннис, много лет назад</figcaption>
+    </figure>
+    <div class="col">
+      <div class="story">
+        <h2 id="past">До падела было 13 лет тенниса</h2>
+        <p class="lead">Профессионально, с турнирами. Лучший результат — топ-200 Tennis Europe в категории до 16 лет. В детстве у меня был контракт с Babolat Russia.</p>
+        <p class="soft">Tennis Europe — юниорский европейский рейтинг, ATP тут ни при чём.</p>
+      </div>
+      <dl class="facts" aria-label="Обо мне">
+        <div><dt>Турниры по паделу</dt><dd>Официальные с мая 2026, плюс PRO-AM и корпоративные</dd></div>
+        <div><dt>Где играю</dt><dd>Регулярно в разных клубах</dd></div>
+        <div><dt>Образование</dt><dd>Профильное, реклама</dd></div>
+        <div><dt>Работа</dt><dd>Аналитик-разработчик в Яндекс Лавке<small>Это мой работодатель. От имени Яндекса я ничего не предлагаю.</small></dd></div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Вместе ===== -->
+<section class="panel-band" aria-labelledby="together">
+  <div class="in block">
+    <header>
+      <h2 id="together">Что можно делать вместе</h2>
+      <p class="lead">Всё это я реально могу делать. Сколько и на каких условиях, решим под ваши задачи.</p>
+    </header>
+    <ul class="tiles">
+      <li><svg class="ico" aria-hidden="true"><use href="#i-racket"/></svg><h3>На турнирах</h3><p>Играю ракеткой NOX на официальных турнирах, PRO-AM и в клубах. Если спросят про ракетку, отвечу как есть.</p></li>
+      <li><svg class="ico" aria-hidden="true"><use href="#i-swap"/></svg><h3>Тест-драйв</h3><p>Если дадите тестовые ракетки, даю сыграть партнёрам и соперникам. Записываю, что понравилось и что нет.</p></li>
+      <li><svg class="ico" aria-hidden="true"><use href="#i-camera"/></svg><h3>Материалы с турниров</h3><p>Подготовка, матчи, ракетка. Список согласуем заранее, чтобы вы могли всё использовать у себя.</p></li>
+      <li><svg class="ico" aria-hidden="true"><use href="#i-chat"/></svg><h3>Обратная связь</h3><p>Раз в месяц коротко пишу, какие модели интересуют игроков и почему они не могут выбрать.</p></li>
+      <li><svg class="ico" aria-hidden="true"><use href="#i-chart"/></svg><h3>Идеи для продвижения</h3><p>Я учился рекламе. Могу предложить формат акции или спецпроекта, а вы решите, подходит ли он вам.</p></li>
+      <li><svg class="ico" aria-hidden="true"><use href="#i-code"/></svg><h3>Аналитика и IT</h3><p>Я аналитик-разработчик. Помогу настроить учёт: UTM-метки, промокоды, простой дашборд по продажам и обращениям. После пилота сам посчитаю, что сработало. С другими техническими задачами тоже могу помочь, объём обсудим.</p></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===== Границы ===== -->
+<section aria-labelledby="clear">
+  <div class="in block">
+    <header><h2 id="clear">Чтобы не было недопонимания</h2></header>
+    <div class="limits">
+      <ul>
+        <li><svg class="ico" aria-hidden="true"><use href="#i-minus"/></svg><p>Я не блогер. Большой аудитории и продакшн-команды у меня нет.</p></li>
+        <li><svg class="ico" aria-hidden="true"><use href="#i-minus"/></svg><p>Не тренер и не организатор турниров. Мероприятия в клубах возможны, только если договоримся с клубом и с вами.</p></li>
+        <li><svg class="ico" aria-hidden="true"><use href="#i-minus"/></svg><p>Яндекс к этому разговору отношения не имеет: ни сотрудники, ни закупки, ни партнёрство.</p></li>
+        <li><svg class="ico" aria-hidden="true"><use href="#i-minus"/></svg><p>Договорённостей между нами пока нет. Эта страница — повод поговорить.</p></li>
+      </ul>
+      <blockquote>Одна ракетка ≠ соцсети, съёмки и мероприятия сразу.<span>Объём работы и поддержку обсудим вместе.</span></blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Пилот ===== -->
+<section class="panel-band" aria-labelledby="check">
+  <div class="in block">
+    <header>
+      <h2 id="check">Как понять, что это работает</h2>
+      <p class="lead">Предлагаю короткий пилот. Срок, мои задачи и ваши расходы фиксируем заранее.</p>
+    </header>
+    <ol class="steps">
+      <li><b>Договориться</b><span>Срок, что делаю я, что даёт бренд.</span></li>
+      <li><b>Отмечать</b><span>Личная ссылка или промокод плюс журнал: кто пробовал ракетку, кто спрашивал, кто купил.</span></li>
+      <li><b>Спрашивать</b><span>Узнаём у покупателей, почему они выбрали эту ракетку.</span></li>
+      <li><b>Сравнить</b><span>Дополнительные продажи против того, во что пилот обошёлся бренду.</span></li>
+    </ol>
+    <div class="pilot-foot">
+      <p>Промокод покажет, откуда пришёл покупатель. Купил бы он и без меня, промокод не скажет. Поэтому смотрим ещё на журнал и на ответы покупателей.</p>
+      <div class="formula">
+        <p class="eq">Пилот окупается, когда дополнительных покупок хватает, чтобы покрыть расходы.</p>
+        <p>Порог считается так: расходы на пилот делим на маржинальный доход с одной покупки и округляем вверх.</p>
+        <p>В расходы входят себестоимость ракеток (не розничная цена), доставка, вознаграждение, если оно будет, и всё, о чём ещё договоримся. Маржинальный доход — то, что остаётся с продажи после переменных расходов и скидок, а не весь чек.</p>
+        <p>Посчитать на ваших цифрах могу отдельно или на созвоне.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Контакты ===== -->
+<section class="court contact" aria-labelledby="contact">
+  <div class="in">
+    <h2 id="contact">Напишите, когда будет удобно</h2>
+    <div class="links">
+      <a href="https://t.me/skuljan" target="_blank" rel="noopener"><span>Telegram</span><b>@skuljan</b></a>
+      <a href="https://www.instagram.com/iannikolaev/" target="_blank" rel="noopener"><span>Instagram</span><b>@iannikolaev</b></a>
+    </div>
+    <footer>
+      <span>Личная страница Яна Николаева. Не официальный ресурс NOX: соглашения о сотрудничестве пока нет.</span>
+      <span>Октябрь 2026</span>
+    </footer>
+  </div>
+</section>
+
+</body>
+</html>
