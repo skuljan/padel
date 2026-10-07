@@ -109,6 +109,8 @@ a { color: inherit; }
 .results .head { display: grid; gap: 16px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 32px); }
 .results .head p { color: var(--on-court-soft); }
 .results .head p strong { color: var(--on-court); }
+.results .match { aspect-ratio: 3 / 2; margin-top: 12px; background: var(--court-shade); }
+.results .match img { object-position: 40% 40%; }
 .board { list-style: none; margin: 0; padding: 0; }
 .board li {
   display: grid; grid-template-columns: calc(var(--t-place) * 3.1) minmax(0, 1fr);
@@ -263,6 +265,7 @@ footer { font-size: var(--t-small); color: var(--on-court-soft); display: flex; 
       <h2 id="season">Сезон 2026</h2>
       <p>Последние одиннадцать турниров из четырнадцати, сверху самые свежие.</p>
       <p><strong>Три вторых места и три третьих.</strong> Август не удался: 9–13 и 11–12. В сентябре и начале октября из пяти турниров три закончил в тройке.</p>
+      <figure class="photo match"><img src="img/match.jpg" alt="Ян Николаев отбивает мяч во время матча" width="1280" height="851" loading="lazy"></figure>
     </div>
     <div>
       <ol class="board">
